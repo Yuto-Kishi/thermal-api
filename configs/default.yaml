@@ -1,7 +1,5 @@
-
-# Adjust to room temperature and setup
 io:
-  driver: simulator  # simulator | lepton_spi | purethermal
+  driver: lepton_spi    # simulator | lepton_spi | purethermal
   fps: 8.7
   width: 160
   height: 120
@@ -10,9 +8,9 @@ io:
   usb_device: "/dev/video0"
 
 thresholds:
-  human_body_c_min: 24.0
+  human_body_c_min: 25.0
   human_body_c_max: 39.0
-  human_head_c_min: 29.0
+  human_head_c_min: 30.0
   human_head_c_max: 39.0
   footprint_c_min: 17.0
   footprint_c_max: 22.0
@@ -22,10 +20,12 @@ thresholds:
   abnormal_fire_c_min: 140.0
 
 processing:
-  bg_alpha: 0.02
+  bg_alpha: 0.03
   morph_kernel: 3
-  min_region_area: 8
-
+  min_region_area: 200
+  line_h_max: 6
+  aspect_ratio_max: 12.0
+  nan_frac_max: 0.25
 viz:
   show: true
   save_dir: outputs

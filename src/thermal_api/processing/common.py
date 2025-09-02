@@ -2,9 +2,28 @@
 import numpy as np
 import cv2 as cv
 
-def to_gray8(temp_c: np.ndarray, tmin: float = 0.0, tmax: float = 140.0) -> np.ndarray:
+def to_gray8(temp_c, tmin=None, tmax=None):
+    
+    import numpy as np
+    # NaN を無視して統計を取る
+    valid = temp_c[np.isfinite(temp_c)]
+    if valid.size == 0:
+        return np.zeros_like(temp_c, dtype=np.uint8)
+
+    # 自動スケーリング：デフォルトはパーセンタイル
+    if tmin is None:
+        tmin = float(np.percentile(valid, 2))   # 下位2%を黒に
+    if tmax is None:
+        tmax = float(np.percentile(valid, 98))  # 上位98%を白に
+
+    # 異常に狭い範囲を防ぐ
+    if tmax - tmin < 1e-3:
+        return np.zeros_like(temp_c, dtype=np.uint8)
+
     g = np.clip((temp_c - tmin) * (255.0 / (tmax - tmin)), 0, 255)
     return g.astype(np.uint8)
+
+
 
 def band_mask(temp_c: np.ndarray, tmin: float, tmax: float) -> np.ndarray:
     return ((temp_c >= tmin) & (temp_c <= tmax)).astype(np.uint8) * 255
